@@ -4,12 +4,12 @@
 This repository contains code to find and annotate homologous flanks of structural variants (SV). Currently only deletions and insertion are supported. This tool was used to detect the homology landscape of [1019 samples from the 1000 Genomes Project sequenced with Nanopore](https://www.biorxiv.org/content/10.1101/2024.04.18.590093v1), but can be applied to other SV callset.
 
 ### System requirement
-- blast (tested on ?)
-- Python (tested on ?)
-- DELLY (tested on ?)
-- pysam (tested on ?)
-- cyvcf2 (tested on ?)
-- RepeatMasker (tested on ?)
+- blast (tested on 2.12.0+)
+- Python (tested on 3.7.12)
+- DELLY (tested on 0.9.1)
+- pysam (tested on 0.21.0)
+- cyvcf2 (tested on 0.30.28)
+- RepeatMasker (tested on 4.1.2)
 
 ### File requirement
 - The VCF file is read in using cyvcf2 and the tool relies on following fields next to mandatory VCF fields:
