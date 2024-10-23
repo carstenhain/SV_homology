@@ -12,7 +12,7 @@ This repository contains code to find and annotate homologous flanks of structur
 - RepeatMasker (tested on ?)
 
 ### File requirement
-- The vcf file is read in using cyvcf2 and the tool relies on following fields next to mandatory vcf fields:
+- The VCF file is read in using cyvcf2 and the tool relies on following fields next to mandatory VCF fields:
   - INFO field - SVTYPE - DEL/INS
   - INFO field - SVLEN - Length of the SV in base pairs
 - Genome reference as fasta file
@@ -28,4 +28,12 @@ python homology_detection.py \
   --blastn_bin path/to/blastn \ #Path to the binary of blastn
   --num_parallel X \ #Number of parallel processes
   --max_homology_length X #Maximium length of size of search window
+```
+The outout of this tool contains an annotated VCF file and different bed and fasta file indicating the homologus region 
+```bash
+*.homology.vcf.gz        # Annotated VCF file
+*.del.homology.bed       # BED file indicating the positions of homologous flanks of deletions on the reference genome
+*.ins_ref.fa             # "Pseudoassemblies" containing the sequence of an insertion flanked by locus specific reference sequence
+*.ins_ref.bed            # BED file indicating the position of the inserted sequence on *.ins_ref.fa 
+*.ins_ref.homology.bed    # BED file indicating the positions of homologous flanks of insertions on *.ins_ref.fa
 ```
