@@ -83,11 +83,11 @@ def blast(subject_seq, query_seq, breakpoint_position, workdir, blast_cmd,
             "-outfmt",
             "6",
             "-perc_identity",
-            "80",
-            "-dust",
-            "no",
-            "-soft_masking",
-            "false"
+            "80"#,
+            #"-dust",
+            #"no",
+            #"-soft_masking",
+            #"false"
         ], stdout=subprocess.PIPE)
 
     # iterate over blast results
