@@ -38,17 +38,14 @@ The outout of this tool contains an annotated VCF file and different bed and fas
 *.ins_ref.bed            # BED file indicating the position of the inserted sequence on *.ins_ref.fa 
 *.ins_ref.homology.bed    # BED file indicating the positions of homologous flanks of insertions on *.ins_ref.fa
 ```
-
-Annotating homologous DNA with RepeatMasker annotations. This tools needs most outputs of `homology_detection.py`. In addition the *.ins_ref.fa must be annotated using `RepeatMasker` and [RM2Bed.py](https://github.com/Dfam-consortium/RepeatMasker/tree/master/util)
+The script `homology_annotator.py` performs intersection between the found homologous flanks of SVs and RepeatMasker annotations. This script needs most outputs of `homology_detection.py`. In addition the *.ins_ref.fa must be annotated using `RepeatMasker` and [RM2Bed.py](https://github.com/Dfam-consortium/RepeatMasker/tree/master/util)
 ```bash
 python homology_detection.py \
-  --vcf_file path/to/file.homology.vcf.gz \ #Path to the gzipped VCF file with homology annotations
-
---vcf_file \ # Path to the VCF file processed with homology_detection.py
---reference_homology_bed \ # Path to the BED file with the SV homology flanks on the reference (DEL, INV) (Output of homology_detection.py)
---insertion_homology_bed \ # Path to the BED file with the SV homology flanks on the insertion alleles (Output of homology_detection.py)
---insertion_fasta_repeatmasker_bed \ # Path to the RepeatMasker annotations (in bed format) for the FASTA file containg the insertion alleles
---repeatmasker_bed \ # Path to the BED file containing RepeatMasker annotations for the reference genome (can be gzipped) (e.g. from UCSC)
---sd_bed \ # Path to the BED file containing Segmental Duplications for the reference genome (can be gzipped)
---bedtools_bin # Path to the binary of BEDtools
+  --vcf_file \ # Path to the VCF file processed with homology_detection.py
+  --reference_homology_bed \ # Path to the BED file with the SV homology flanks on the reference (DEL, INV) (Output of homology_detection.py)
+  --insertion_homology_bed \ # Path to the BED file with the SV homology flanks on the insertion alleles (Output of homology_detection.py)
+  --insertion_fasta_repeatmasker_bed \ # Path to the RepeatMasker annotations (in bed format) for the FASTA file containg the insertion alleles
+  --repeatmasker_bed \ # Path to the BED file containing RepeatMasker annotations for the reference genome (e.g. from UCSC)
+  --sd_bed \ # Path to the BED file containing Segmental Duplications for the reference genome (e.g. T2T.SD.filtered.bed)
+  --bedtools_bin # Path to the binary of BEDtools
 ```
