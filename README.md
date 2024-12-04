@@ -15,6 +15,7 @@ This repository contains code to find and annotate homologous flanks of structur
 - The VCF file is read in using cyvcf2 and the tool relies on following fields next to mandatory VCF fields:
   - INFO field - SVTYPE - DEL/INS
   - INFO field - SVLEN - Length of the SV in base pairs
+  - The VCF file must be gzipped and end on .vcf.gz
 - Genome reference as fasta file
 - [RepeatMasker](https://github.com/Dfam-consortium/RepeatMasker) bed file for the reference genome
 
@@ -22,7 +23,7 @@ This repository contains code to find and annotate homologous flanks of structur
 Detecting homologous DNA streches flanking SV
 ```bash
 python homology_detection.py \
-  --vcf_file path/to/file.vcf \ #Path to the VCF file to be processed
+  --vcf_file path/to/file.vcf.gz \ #Path to the gzipped VCF file to be processed
   --top_workdir path/to/workdir \ #Path to the working directory
   --reference_fasta path/to/fasta.fa \ #Path to the reference FASTA file
   --blastn_bin path/to/blastn \ #Path to the binary of blastn
