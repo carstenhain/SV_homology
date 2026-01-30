@@ -24,13 +24,13 @@ later additions will need
 Detecting homologous DNA streches flanking SV
 ```bash
 nextflow run SV_homology/pipeline/homology_detection.nf \
---vcf_file_path path/to/file.vcf \ ## Path to VCF file containing SV calls
---outdir path/to/outdir \ ## path to output folder
---final_name name \ ## name of the callset
---blastn_path path/to/blastn \ ## Path to blastn binary
---reference path/to/fasta.fa \ ## Path to the reference FASTA file
---max_homology_length L \ ## Maximum length of the search window 
---num_parallel = 10 ## Number of parallel processes
+--vcf_file_path path/to/file.vcf \    ## Path to VCF file containing SV calls
+--outdir path/to/outdir \             ## Path to output folder
+--final_name name \                   ## Name of the callset
+--blastn_path path/to/blastn \        ## Path to blastn binary
+--reference path/to/fasta.fa \        ## Path to the reference FASTA file
+--max_homology_length L \             ## Maximum length of the search window 
+--num_parallel = 10                   ## Number of parallel processes
 ```
 This tool outputs an annotated VCF file and different bed file indicating the homologus region into 'outdir'
 ```bash
