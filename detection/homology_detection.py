@@ -1,12 +1,8 @@
-import multiprocessing
 import os
 import cyvcf2 # type: ignore
-import datetime
-from multiprocessing import Pool
 import pysam # type: ignore
 import subprocess
 import numpy as np # type: ignore
-from Bio.Seq import Seq # type: ignore
 import argparse
 import pandas as pd # type: ignore
 from tqdm import tqdm # type: ignore

@@ -1,51 +1,40 @@
 # SV homology
 ## Overview
 
-This repository contains code to find and annotate homologous flanks of structural variants (SV). Currently only deletions and insertion are supported. This tool was used to detect the homology landscape of [1019 samples from the 1000 Genomes Project sequenced with Nanopore](https://www.biorxiv.org/content/10.1101/2024.04.18.590093v1), but can be applied to other SV callset.
+This projects finds homologous regions at the breakpoints of structural variants (SV). Those homologous sequences hint to a non-allelic homologous recombination (NAHR) mechanism of formation. Currently the tool words for deletions, inversions and duplications. Support for insertions was present in a earlier version and will be added soon.
+This tool (in a earlier version but with the same logic) was used to detect the homology landscape of [1019 samples from the 1000 Genomes Project sequenced with Nanopore](https://www.nature.com/articles/s41586-025-09290-7), but can be applied to other SV calls to test for homologous flanks and a potential NAHR mechanism.
 
 ### System requirement
-- blast (tested on 2.12.0+)
-- Python (tested on 3.7.12)
-- DELLY (tested on 0.9.1)
+- blast (tested on 2.14.1+)
+- Python (tested on 3.9.18)
 - pysam (tested on 0.21.0)
 - cyvcf2 (tested on 0.30.28)
-- RepeatMasker (tested on 4.1.2)
+- nextflow (tested on  24.04.4.5917)
+later additions will need 
+- DELLY (earlier version tested on 0.9.1)
+- RepeatMasker (earlier version tested on 4.1.2)
 
 ### File requirement
 - The VCF file is read in using cyvcf2 and the tool relies on following fields next to mandatory VCF fields:
-  - INFO field - SVTYPE - DEL/INS
+  - INFO field - SVTYPE - DEL/DUP/INV
   - INFO field - SVLEN - Length of the SV in base pairs
-  - The VCF file must be gzipped and end on .vcf.gz
 - Genome reference as fasta file
-- [RepeatMasker](https://github.com/Dfam-consortium/RepeatMasker) bed file for the reference genome
 
 ### Usage
 Detecting homologous DNA streches flanking SV
 ```bash
-python homology_detection.py \
-  --vcf_file path/to/file.vcf.gz \ #Path to the gzipped VCF file to be processed
-  --top_workdir path/to/workdir \ #Path to the working directory
-  --reference_fasta path/to/fasta.fa \ #Path to the reference FASTA file
-  --blastn_bin path/to/blastn \ #Path to the binary of blastn
-  --num_parallel X \ #Number of parallel processes
-  --max_homology_length X #Maximium length of size of search window
+nextflow run SV_homology/pipeline/homology_detection.nf \
+--vcf_file_path path/to/file.vcf \ ## Path to VCF file containing SV calls
+--outdir path/to/outdir \ ## path to output folder
+--final_name name \ ## name of the callset
+--blastn_path path/to/blastn \ ## Path to blastn binary
+--reference path/to/fasta.fa \ ## Path to the reference FASTA file
+--max_homology_length L \ ## Maximum length of the search window 
+--num_parallel = 10 ## Number of parallel processes
 ```
-The outout of this tool contains an annotated VCF file and different bed and fasta file indicating the homologus region 
+This tool outputs an annotated VCF file and different bed file indicating the homologus region into 'outdir'
 ```bash
-*.homology.vcf.gz        # Annotated VCF file
-*.del.homology.bed       # BED file indicating the positions of homologous flanks of deletions on the reference genome
-*.ins_ref.fa             # "Pseudoassemblies" containing the sequence of an insertion flanked by locus specific reference sequence
-*.ins_ref.bed            # BED file indicating the position of the inserted sequence on *.ins_ref.fa 
-*.ins_ref.homology.bed    # BED file indicating the positions of homologous flanks of insertions on *.ins_ref.fa
-```
-The script `homology_annotator.py` performs intersection between the found homologous flanks of SVs and RepeatMasker annotations. This script needs most outputs of `homology_detection.py`. In addition the *.ins_ref.fa must be annotated using `RepeatMasker` and [RM2Bed.py](https://github.com/Dfam-consortium/RepeatMasker/tree/master/util)
-```bash
-python homology_detection.py \
-  --vcf_file \ # Path to the VCF file processed with homology_detection.py
-  --reference_homology_bed \ # Path to the BED file with the SV homology flanks on the reference (DEL, INV) (Output of homology_detection.py)
-  --insertion_homology_bed \ # Path to the BED file with the SV homology flanks on the insertion alleles (Output of homology_detection.py)
-  --insertion_fasta_repeatmasker_bed \ # Path to the RepeatMasker annotations (in bed format) for the FASTA file containg the insertion alleles
-  --repeatmasker_bed \ # Path to the BED file containing RepeatMasker annotations for the reference genome (e.g. from UCSC)
-  --sd_bed \ # Path to the BED file containing Segmental Duplications for the reference genome (e.g. T2T.SD.filtered.bed)
-  --bedtools_bin # Path to the binary of BEDtools
+*.homology.vcf                # Annotated VCF file
+final_homology.bed            # BED file containing the homologous flanks of SV on the reference genome
+final_candidate_homology.bed  # BED file containing candidate homologous flanks of the SV that did not pass all filtering criteria, they might be useful in cases of inaccurate SV breakpoint calling
 ```
