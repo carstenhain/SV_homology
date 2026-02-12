@@ -375,7 +375,7 @@ def detect_homology(record:cyvcf2.Variant, reference_file_path:str, workdir:str,
             s_seq = reference.fetch(record.CHROM, record.POS + interval[0], record.POS + interval[1])
             q_seq = reference.fetch(record.CHROM, record.POS + np.abs(record.INFO["SVLEN"]) + interval[0], record.POS + np.abs(record.INFO["SVLEN"]) + interval[1])
         else:
-            raise ValueError("SVTYPE not supported")
+            raise ValueError(f"SVTYPE {record.INFO['SVTYPE']} not supported (for variant {record.ID})")
 
         ### run blast to get best hit for this interval
         passing_hits, candidate_hits = blast(
@@ -410,8 +410,8 @@ def detect_homology(record:cyvcf2.Variant, reference_file_path:str, workdir:str,
     except ValueError:
         candidate_hits_df = pd.DataFrame()
 
-    
-    candidate_hits_df.to_csv(os.path.join(workdir, f"{record.ID}_candidates.tsv"), sep="\t", index=False)
+    ### dump candiate hits to file for debugging
+    #candidate_hits_df.to_csv(os.path.join(workdir, f"{record.ID}_candidates.tsv"), sep="\t", index=False)
 
     ### select the best hit and write
     if all_hits_df.shape[0] > 0:
@@ -422,10 +422,14 @@ def detect_homology(record:cyvcf2.Variant, reference_file_path:str, workdir:str,
         record.INFO["HOMPID"] = float(best_hit["hit_pid"])
 
         write_hit_as_bed (hit=best_hit, record=record, bed_outfile=bed_outfile)
-    
+    ### add o as homology length if no homology is found
+    else:
+        record.INFO["HOMLEN"] = 0
+        record.INFO["HOMPID"] = 0.0
+
     ### if an output file for the candidate hits is provide write them there
     if failing_hits is not None and candidate_hits_df.shape[0] > 0:
-        for idx, hit in candidate_hits_df[candidate_hits_df["hit_length"] >= 100].iterrows():
+        for idx, hit in candidate_hits_df[candidate_hits_df["hit_length"] >= 20].iterrows():
             write_hit_as_bed (hit=hit, record=record, bed_outfile=failing_hits)
 
     return record
